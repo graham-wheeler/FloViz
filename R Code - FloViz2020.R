@@ -17,12 +17,6 @@ library(gifski) # - used as default renderer for "image_read"
 library(magick) # - needed for building final GIF (image_read, image_append, image_write)
 library(tidyr) # - needed for "gather"
 
-# Installation of the following may be required if "library(gganimate)" generates error message
-# install.packages("gifski")
-# install.packages("av")
-# library(gifski)
-# library(av)
-
 rm(list=ls())
 
 #######################################
