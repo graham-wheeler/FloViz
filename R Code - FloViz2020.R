@@ -9,17 +9,17 @@
 #############################
 
 install.packages("gganimate")
-install.packages("gifski")
-install.packages("av")
 install.packages("magick")
 install.packages("tidyr")
-install.packages("tidyverse")
-library(gganimate)
-library(gifski)
-library(av)
-library(magick)
-library(tidyr)
-library(tidyverse)
+library(gganimate) # - for animation - includes ggplot2 installation
+library(magick) # - needed for building final GIF (image_read, image_append, image_write)
+library(tidyr) # - needed for "gather"
+
+# Installation of the following may be required if "library(gganimate)" generates error message
+# install.packages("gifski")
+# install.packages("av")
+# library(gifski)
+# library(av)
 
 rm(list=ls())
 
@@ -77,7 +77,7 @@ fps <- 20
 width <- 700
 
 # Generate static line plot
-p4_1 <- ggplot(red_data_long, aes(x = factor(Combined_Date), y = MMR, group = death_cause)) + 
+line_plot <- ggplot(red_data_long, aes(x = factor(Combined_Date), y = MMR, group = death_cause)) + 
   scale_color_viridis_d() + 
   geom_segment(aes(xend = 24.1, yend = MMR), linetype = 2, colour = 'grey') +
   geom_vline(xintercept=12.5, linetype="dashed", size = 1, colour = "blue") +
@@ -97,22 +97,22 @@ p4_1 <- ggplot(red_data_long, aes(x = factor(Combined_Date), y = MMR, group = de
 # Data frame for arrow
 df <- data.frame(x1 = 15.5, x2 = 12.75, y1 = 100, y2 = 95)
 # Add arrow
-p4_1 <- p4_1 + geom_segment(
+line_plot <- line_plot + geom_segment(
   aes(x = x1, y = y1, xend = x2, yend = y2),
   data = df,
   arrow = arrow(length = unit(0.03, "npc")), inherit.aes = FALSE, colour = "blue", size = 1)
 
 # Preview static line plot
-# p4_1
+# line_plot
 
-anim4_1 <- p4_1 + transition_reveal(index)
-anim4_1 <- animate(anim4_1, nframes = nframes, fps = fps, width = width, height = 450)
+anim_line_plot <- line_plot + transition_reveal(index)
+anim_line_plot <- animate(anim_line_plot, nframes = nframes, fps = fps, width = width, height = 450)
 
 # Preview animated line plot
-# anim4_1
+# anim_line_plot
 
 # Generate static bar plot
-p4_2 <- ggplot(red_data1, aes(x = factor(Combined_Date), y = Average_Army_Size)) +
+bar_plot <- ggplot(red_data1, aes(x = factor(Combined_Date), y = Average_Army_Size)) +
   geom_bar(color = "grey", fill = "grey", stat = "identity") + 
   geom_vline(xintercept=12.5, linetype="dashed", size = 1, colour = "blue")+
   guides(fill = FALSE, size = FALSE) + 
@@ -129,26 +129,26 @@ p4_2 <- ggplot(red_data1, aes(x = factor(Combined_Date), y = Average_Army_Size))
 # Data frame for arrow
 df <- data.frame(x1 = 15.5, x2 = 12.75, y1 = 50000, y2 = 47500)
 # Add arrow
-p4_2 <- p4_2 + geom_segment(
+bar_plot <- bar_plot + geom_segment(
   aes(x = x1, y = y1, xend = x2, yend = y2),
   data = df,
   arrow = arrow(length = unit(0.03, "npc")), inherit.aes = FALSE, colour = "blue", size = 1)
 
 # Preview static line plot
-# p4_2
+# bar_plot
 
-anim4_2 <- p4_2 + transition_states(index,transition_length = 3, state_length = 1, wrap = FALSE) +
+anim_bar_plot <- bar_plot + transition_states(index,transition_length = 3, state_length = 1, wrap = FALSE) +
   shadow_mark() + 
   enter_grow() +
   enter_fade()
-anim4_2 <- animate(anim4_2, nframes = nframes, fps = fps, width = width, height = 250)
+anim_bar_plot <- animate(anim_bar_plot, nframes = nframes, fps = fps, width = width, height = 250)
 
 # Preview animated line plot
-# anim4_2
+# anim_bar_plot
 
 # Now combine both plots
-a_mgif <- image_read(anim4_1)
-b_mgif <- image_read(anim4_2)
+a_mgif <- image_read(anim_line_plot)
+b_mgif <- image_read(anim_bar_plot)
 
 new_gif <- image_append(c(a_mgif[1], b_mgif[1]), stack = TRUE)
 for(i in 2:nframes){
@@ -156,10 +156,10 @@ for(i in 2:nframes){
   new_gif <- c(new_gif, combined)
 }
 
-# Preview combined animated plot as gif
+# Preview combined animated plot as GIF
 # new_gif
 
-# Save gif
+# Save GIF
 image_write(new_gif, path="Nightingale2020.gif")
 
 #######
