@@ -9,9 +9,11 @@
 #############################
 
 install.packages("gganimate")
+install.packages("gifski")
 install.packages("magick")
 install.packages("tidyr")
 library(gganimate) # - for animation - includes ggplot2 installation
+library(gifski) # - used as default renderer for "image_read"
 library(magick) # - needed for building final GIF (image_read, image_append, image_write)
 library(tidyr) # - needed for "gather"
 
